@@ -1,0 +1,43 @@
+logs/4149b4c4-f8c9-4b39-a82e-74dbe4586125.txt
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/workspace/lin-attn-tests/train_gpt.py", line 429, in <module>
+[rank0]:     inputs, targets = next(val_loader)
+[rank0]:                       ^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/lin-attn-tests/train_gpt.py", line 274, in distributed_data_generator
+[rank0]:     inputs = buf[:-1].view(batch_size, seq_len).to(device="cuda", dtype=torch.int32, non_blocking=True) # no sync on host side;
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: RuntimeError: shape '[512, 1024]' is invalid for input of size 512
+[rank0]:[W204 18:54:26.026592331 ProcessGroupNCCL.cpp:1487] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+E0204 18:54:28.169000 2660 torch/distributed/elastic/multiprocessing/api.py:870] failed (exitcode: 1) local_rank: 0 (pid: 2675) of binary: /usr/bin/python
+Traceback (most recent call last):
+  File "/usr/local/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/run.py", line 918, in main
+    run(args)
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/run.py", line 909, in run
+    elastic_launch(
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/launcher/api.py", line 139, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/launcher/api.py", line 270, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+train_gpt.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-02-04_18:54:28
+  host      : 75cb5f212abc
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 2675)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
