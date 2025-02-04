@@ -7,6 +7,7 @@ import time
 import copy
 from dataclasses import dataclass
 from pathlib import Path
+import wandb
 
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 import torch
@@ -300,6 +301,7 @@ class Hyperparameters:
     # evaluation and logging
     val_loss_every = 125 # every how many steps to evaluate val loss? 0 for only at the end
     save_checkpoint = False
+    log_wandb = False
 args = Hyperparameters()
 
 # torchrun sets these env variables
@@ -313,9 +315,12 @@ dist.barrier()
 master_process = (rank == 0) # this process will do logging, checkpointing etc.
 
 # begin logging
+if master_process and args.log_wandb:
+    wandb.init(project="lin-attn-tests", config={**vars(args)})
+
 logfile = None
 if master_process:
-    run_id = uuid.uuid4()
+    run_id = uuid.uuid4() if not args.log_wandb else wandb.run.name
     os.makedirs("logs", exist_ok=True)
     logfile = f"logs/{run_id}.txt"
     print(logfile)
@@ -432,6 +437,8 @@ for step in range(train_steps + 1):
         del val_loader
         dist.all_reduce(val_loss, op=dist.ReduceOp.AVG)
         print0(f"step:{step}/{train_steps} val_loss:{val_loss:.4f} train_time:{training_time_ms:.0f}ms step_avg:{training_time_ms/max(step, 1):.2f}ms", console=True)
+        if master_process and args.log_wandb:
+            wandb.log({"val_loss": val_loss, "step": step})
         model.train()
         # start the clock again
         torch.cuda.synchronize()
