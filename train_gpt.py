@@ -232,9 +232,7 @@ class GPT(nn.Module):
         self.lm_head.weight.detach().zero_() # @Grad62304977
 
     def forward(self, input_seq: Tensor, target_seq: Tensor):
-        assert input_seq.ndim == 1
-
-        x = norm(self.embed(input_seq)[None]) # use of norm here by @Grad62304977
+        x = norm(self.embed(input_seq)) # use of norm here by @Grad62304977
 
         for i in range(len(self.blocks)):
             x = self.blocks[i](x)
@@ -243,7 +241,7 @@ class GPT(nn.Module):
         logits = self.lm_head(x)
         # @Grad62304977 added tanh softcapping following Gemma 2 paper, @KoszarskyB reduced it from 30 to 15, @YouJiacheng shifted it by +15 (2*sigmoid(2*x)=tanh(x)+1)
         logits = 30 * torch.sigmoid(logits.float() / 7.5)
-        loss = F.cross_entropy(logits.view(-1, logits.size(-1)), target_seq)
+        loss = F.cross_entropy(logits.view(-1, logits.size(-1)), target_seq.view(-1))
         return loss
 
 # -----------------------------------------------------------------------------
@@ -264,11 +262,11 @@ def _load_data_shard(file: Path):
 def distributed_data_generator(filename_pattern: str, batch_size: int, seq_len: int, rank : int, world_size : int):
     files = sorted(Path.cwd().glob(filename_pattern))
     assert batch_size % world_size == 0
-    local_batch_size = batch_size // world_size
+    local_batch_size = (batch_size*seq_len) // world_size
     file_iter = iter(files) # use itertools.cycle(files) instead if you want to do multi-epoch training
     tokens, pos = _load_data_shard(next(file_iter)), 0
     while True:
-        if pos + batch_size + 1 >= len(tokens):
+        if pos + (batch_size*seq_len) + 1 >= len(tokens):
             tokens, pos = _load_data_shard(next(file_iter)), 0
         buf = tokens[pos + rank * local_batch_size:][:local_batch_size + 1]
         inputs = buf[:-1].view(batch_size, seq_len).to(device="cuda", dtype=torch.int32, non_blocking=True) # no sync on host side;
@@ -387,9 +385,10 @@ warmup_steps = 10
 initial_state = dict(model=copy.deepcopy(model.state_dict()),
                      optimizers=[copy.deepcopy(opt.state_dict()) for opt in optimizers]) # save the initial state
 for _ in range(warmup_steps):
-    inputs = targets = torch.randint(0, args.vocab_size, size=(args.seq_len,), device="cuda")
+    inputs = targets = torch.randint(0, args.vocab_size, size=(args.micro_batch_size, args.seq_len,), device="cuda")
     model(inputs.to(torch.int32), targets).backward()
     for param in model.parameters():
+        param.grad /= args.batch_size
         dist.all_reduce(param.grad, op=dist.ReduceOp.AVG)
     for opt in optimizers:
         opt.step()
@@ -403,7 +402,7 @@ del initial_state
 #        Training and validation       #
 ########################################
 
-train_loader = distributed_data_generator(args.train_files, args.batch_size, args.seq_len, rank, world_size)
+train_loader = distributed_data_generator(args.train_files, args.micro_batch_size, args.seq_len, rank, world_size)
 training_time_ms = 0
 # start the clock
 torch.cuda.synchronize()
@@ -419,7 +418,7 @@ for step in range(train_steps + 1):
         torch.cuda.synchronize()
         training_time_ms += 1000 * (time.perf_counter() - t0)
         model.eval()
-        val_batch_size = args.micro_batch_size
+        val_batch_size = args.micro_batch_size*args.seq_len
         assert args.val_tokens % val_batch_size == 0
         val_steps = args.val_tokens // val_batch_size
         val_loader = distributed_data_generator(args.val_files, args.micro_batch_size, args.seq_len, rank, world_size)
@@ -448,6 +447,7 @@ for step in range(train_steps + 1):
         break
 
     # --------------- TRAINING SECTION -----------------
+    print("training step")
     for i in range(args.batch_size // args.micro_batch_size):
         inputs, targets = next(train_loader)
         model(inputs, targets).backward()

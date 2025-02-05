@@ -1,14 +1,142 @@
-logs/4149b4c4-f8c9-4b39-a82e-74dbe4586125.txt
+logs/344bb601-f716-481f-b049-512ea5738849.txt
+step:0/1770 val_loss:10.8258 train_time:0ms step_avg:0.03ms
+training step
+step:1/1770 train_time:3883ms step_avg:3882.97ms
+training step
+step:2/1770 train_time:7750ms step_avg:3875.11ms
+training step
+step:3/1770 train_time:11640ms step_avg:3880.02ms
+training step
+step:4/1770 train_time:15528ms step_avg:3881.96ms
+training step
+step:5/1770 train_time:19421ms step_avg:3884.25ms
+training step
+step:6/1770 train_time:23317ms step_avg:3886.16ms
+training step
+step:7/1770 train_time:27211ms step_avg:3887.32ms
+training step
+step:8/1770 train_time:31103ms step_avg:3887.83ms
+training step
+step:9/1770 train_time:34993ms step_avg:3888.07ms
+training step
+step:10/1770 train_time:38886ms step_avg:3888.58ms
+training step
+step:11/1770 train_time:42778ms step_avg:3888.90ms
+training step
+step:12/1770 train_time:46668ms step_avg:3889.03ms
+training step
+step:13/1770 train_time:50562ms step_avg:3889.38ms
+training step
+step:14/1770 train_time:54453ms step_avg:3889.47ms
+training step
+step:15/1770 train_time:58344ms step_avg:3889.59ms
+training step
+step:16/1770 train_time:62238ms step_avg:3889.86ms
+training step
+step:17/1770 train_time:66129ms step_avg:3889.93ms
+training step
+step:18/1770 train_time:70022ms step_avg:3890.12ms
+training step
+step:19/1770 train_time:73916ms step_avg:3890.33ms
+training step
+step:20/1770 train_time:77814ms step_avg:3890.69ms
+training step
+step:21/1770 train_time:81710ms step_avg:3890.97ms
+training step
+step:22/1770 train_time:85606ms step_avg:3891.19ms
+training step
+step:23/1770 train_time:89503ms step_avg:3891.42ms
+training step
+step:24/1770 train_time:93397ms step_avg:3891.55ms
+training step
+step:25/1770 train_time:97293ms step_avg:3891.73ms
+training step
+step:26/1770 train_time:101190ms step_avg:3891.93ms
+training step
+step:27/1770 train_time:105085ms step_avg:3892.05ms
+training step
+step:28/1770 train_time:108983ms step_avg:3892.25ms
+training step
+step:29/1770 train_time:112879ms step_avg:3892.37ms
+training step
+step:30/1770 train_time:116775ms step_avg:3892.51ms
+training step
+step:31/1770 train_time:120672ms step_avg:3892.65ms
+training step
+step:32/1770 train_time:124571ms step_avg:3892.85ms
+training step
+step:33/1770 train_time:128468ms step_avg:3892.95ms
+training step
+step:34/1770 train_time:132366ms step_avg:3893.13ms
+training step
+step:35/1770 train_time:136264ms step_avg:3893.25ms
+training step
+W0205 07:39:43.320000 8564 torch/distributed/elastic/agent/server/api.py:719] Received 2 death signal, shutting down workers
+W0205 07:39:43.321000 8564 torch/distributed/elastic/multiprocessing/api.py:898] Sending process 8628 closing signal SIGINT
 [rank0]: Traceback (most recent call last):
-[rank0]:   File "/workspace/lin-attn-tests/train_gpt.py", line 429, in <module>
-[rank0]:     inputs, targets = next(val_loader)
-[rank0]:                       ^^^^^^^^^^^^^^^^
-[rank0]:   File "/workspace/lin-attn-tests/train_gpt.py", line 274, in distributed_data_generator
-[rank0]:     inputs = buf[:-1].view(batch_size, seq_len).to(device="cuda", dtype=torch.int32, non_blocking=True) # no sync on host side;
-[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[rank0]: RuntimeError: shape '[512, 1024]' is invalid for input of size 512
-[rank0]:[W204 18:54:26.026592331 ProcessGroupNCCL.cpp:1487] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
-E0204 18:54:28.169000 2660 torch/distributed/elastic/multiprocessing/api.py:870] failed (exitcode: 1) local_rank: 0 (pid: 2675) of binary: /usr/bin/python
+[rank0]:   File "/workspace/lin-attn-tests/train_gpt.py", line 453, in <module>
+[rank0]:     model(inputs, targets).backward()
+[rank0]:     ^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_dynamo/eval_frame.py", line 577, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/lin-attn-tests/train_gpt.py", line 234, in forward
+[rank0]:     def forward(self, input_seq: Tensor, target_seq: Tensor):
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_dynamo/eval_frame.py", line 756, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_functorch/aot_autograd.py", line 1211, in forward
+[rank0]:     return compiled_fn(full_args)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 309, in runtime_wrapper
+[rank0]:     all_outs = call_func_at_runtime_with_args(
+[rank0]:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_functorch/_aot_autograd/utils.py", line 126, in call_func_at_runtime_with_args
+[rank0]:     out = normalize_as_list(f(args))
+[rank0]:                             ^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_functorch/_aot_autograd/utils.py", line 100, in g
+[rank0]:     return f(*args)
+[rank0]:            ^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/autograd/function.py", line 575, in apply
+[rank0]:     return super().apply(*args, **kwargs)  # type: ignore[misc]
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 1823, in forward
+[rank0]:     fw_outs = call_func_at_runtime_with_args(
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_functorch/_aot_autograd/utils.py", line 126, in call_func_at_runtime_with_args
+[rank0]:     out = normalize_as_list(f(args))
+[rank0]:                             ^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 489, in wrapper
+[rank0]:     return compiled_fn(runtime_args)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_inductor/output_code.py", line 464, in __call__
+[rank0]:     return self.current_callable(inputs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_inductor/utils.py", line 2203, in run
+[rank0]:     return model(new_inputs)
+[rank0]:            ^^^^^^^^^^^^^^^^^
+[rank0]:   File "/tmp/torchinductor_root/4n/c4nx35i5cmty4j5hbitavdcopkxi3c6wjlat7h4itsrofkq3cftb.py", line 1764, in call
+[rank0]:     triton_per_fused__to_copy_add_mean_mul_pow_rsqrt_7.run(buf374, buf376, buf365, buf378, 16384, 768, grid=grid(16384), stream=stream0)
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 960, in run
+[rank0]:     return launcher(
+[rank0]:            ^^^^^^^^^
+[rank0]:   File "<string>", line 6, in launcher
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/triton/backends/nvidia/driver.py", line 435, in __call__
+[rank0]:     self.launch(*args, **kwargs)
+[rank0]: KeyboardInterrupt
+[rank0]:[W205 07:39:44.541566632 ProcessGroupNCCL.cpp:1487] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
 Traceback (most recent call last):
   File "/usr/local/bin/torchrun", line 8, in <module>
     sys.exit(main())
@@ -23,21 +151,17 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.11/dist-packages/torch/distributed/launcher/api.py", line 139, in __call__
     return launch_agent(self._config, self._entrypoint, list(args))
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/launcher/api.py", line 270, in launch_agent
-    raise ChildFailedError(
-torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
-============================================================
-train_gpt.py FAILED
-------------------------------------------------------------
-Failures:
-  <NO_OTHER_FAILURES>
-------------------------------------------------------------
-Root Cause (first observed failure):
-[0]:
-  time      : 2025-02-04_18:54:28
-  host      : 75cb5f212abc
-  rank      : 0 (local_rank: 0)
-  exitcode  : 1 (pid: 2675)
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-============================================================
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/launcher/api.py", line 261, in launch_agent
+    result = agent.run()
+             ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/elastic/agent/server/api.py", line 711, in run
+    result = self._invoke_run(role)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/elastic/agent/server/api.py", line 870, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 8564 got signal: 2
