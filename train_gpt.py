@@ -452,8 +452,8 @@ for step in range(train_steps + 1):
         inputs, targets = next(train_loader)
         model(inputs, targets).backward()
     for param in model.parameters():
+        param.grad /= (args.batch_size // args.micro_batch_size)
         dist.all_reduce(param.grad, op=dist.ReduceOp.AVG)
-    # set optimization hyperparameters
     for opt in optimizers:
         for group in opt.param_groups:
             group["lr"] = group["initial_lr"] * get_lr(step)
